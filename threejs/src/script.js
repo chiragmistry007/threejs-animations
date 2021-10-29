@@ -13,15 +13,28 @@ const canvas = document.querySelector('canvas.webgl')
 const scene = new THREE.Scene()
 
 // Objects
-const geometry = new THREE.TorusGeometry( .7, .2, 16, 100 );
+const vertices = [];
+
+for ( let i = 0; i < 10000; i ++ ) {
+
+	const x = THREE.MathUtils.randFloatSpread( 2000 );
+	const y = THREE.MathUtils.randFloatSpread( 2000 );
+	const z = THREE.MathUtils.randFloatSpread( 2000 );
+
+	vertices.push( x, y, z );
+
+}
+// const geometry = new THREE.TorusGeometry( .7, .2, 16, 100 );
+const geometry = new THREE.BufferGeometry();
+geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
 
 // Materials
 
-const material = new THREE.MeshBasicMaterial()
+const material = new THREE.PointsMaterial({ color: 0x888888 })
 material.color = new THREE.Color(0xff0000)
 
 // Mesh
-const sphere = new THREE.Mesh(geometry,material)
+const sphere = new THREE.Points(geometry,material)
 scene.add(sphere)
 
 // Lights
@@ -59,10 +72,13 @@ window.addEventListener('resize', () =>
  * Camera
  */
 // Base camera
-const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
+const camera = new THREE.PerspectiveCamera(40, sizes.width / sizes.height, 0.1, 100)
 camera.position.x = 0
 camera.position.y = 0
 camera.position.z = 2
+gui.add(camera.position, 'x').min(-5).max(5)
+gui.add(camera.position, 'y').min(-5).max(5)
+gui.add(camera.position, 'z').min(-5).max(5)
 scene.add(camera)
 
 // Controls
