@@ -13,37 +13,57 @@ const canvas = document.querySelector('canvas.webgl')
 const scene = new THREE.Scene()
 
 // Objects
-const vertices = [];
-
-for ( let i = 0; i < 10000; i ++ ) {
-
-	const x = THREE.MathUtils.randFloatSpread( 2000 );
-	const y = THREE.MathUtils.randFloatSpread( 2000 );
-	const z = THREE.MathUtils.randFloatSpread( 2000 );
-
-	vertices.push( x, y, z );
-
-}
 // const geometry = new THREE.TorusGeometry( .7, .2, 16, 100 );
-const geometry = new THREE.BufferGeometry();
-geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
+// const BoxGeometry = new THREE.BoxGeometry(1, 1, 1);
+const planeGeometry = new THREE.PlaneGeometry(5, 5, 10, 10)
 
 // Materials
-
-const material = new THREE.PointsMaterial({ color: 0x888888 })
+const material = new THREE.MeshPhongMaterial()
 material.color = new THREE.Color(0xff0000)
+material.side = THREE.DoubleSide
+material.flatShading = THREE.FlatShading
+
+const materialFolder = gui.addFolder('Material')
+const color = {color: '#ff0000'}
+materialFolder.addColor(color, 'color').onChange(() => {
+    material.color.set(color.color)
+})
+materialFolder.open()
 
 // Mesh
-const sphere = new THREE.Points(geometry,material)
-scene.add(sphere)
+// const sphere = new THREE.Mesh(geometry,material)
+// const box = new THREE.Mesh(BoxGeometry,material)
+const plane = new THREE.Mesh(planeGeometry, material)
+scene.add(plane)
+
+const { array } = plane.geometry.attributes.position
+for (let i = 0; i < array.length; i += 3) {
+    const x = array[i];
+    const y = array[i + 2];
+    const z = array[i + 3];
+
+    array[i + 2] = x + Math.random()
+}
 
 // Lights
 
-const pointLight = new THREE.PointLight(0xffffff, 0.1)
-pointLight.position.x = 2
-pointLight.position.y = 3
-pointLight.position.z = 4
-scene.add(pointLight)
+// const pointLight = new THREE.PointLight(0xffffff, 0.1)
+// pointLight.position.x = 2
+// pointLight.position.y = 3
+// pointLight.position.z = 4
+
+// scene.add(pointLight)
+
+// Direction Light
+const directionLight = new THREE.DirectionalLight(0xffffff, 1)
+directionLight.position.set(0,0,1)
+scene.add(directionLight)
+
+const directionLightFolder = gui.addFolder('Direction Light')
+directionLightFolder.add(directionLight.position,'x', -5,5)
+directionLightFolder.add(directionLight.position, 'y', -5, 5)
+directionLightFolder.add(directionLight.position, 'z', -5, 5)
+directionLightFolder.open()
 
 /**
  * Sizes
@@ -72,14 +92,17 @@ window.addEventListener('resize', () =>
  * Camera
  */
 // Base camera
-const camera = new THREE.PerspectiveCamera(40, sizes.width / sizes.height, 0.1, 100)
-camera.position.x = 0
-camera.position.y = 0
-camera.position.z = 2
-gui.add(camera.position, 'x').min(-5).max(5)
-gui.add(camera.position, 'y').min(-5).max(5)
-gui.add(camera.position, 'z').min(-5).max(5)
+const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 1000)
+// camera.position.x = 0
+// camera.position.y = 0
+camera.position.z = 5
 scene.add(camera)
+
+const cameraFolder = gui.addFolder('Camera Position')
+cameraFolder.add(camera.position,'x', -5,5)
+cameraFolder.add(camera.position, 'y', -5, 5)
+cameraFolder.add(camera.position, 'z', -5, 10)
+cameraFolder.open()
 
 // Controls
 // const controls = new OrbitControls(camera, canvas)
@@ -106,7 +129,7 @@ const tick = () =>
     const elapsedTime = clock.getElapsedTime()
 
     // Update objects
-    sphere.rotation.y = .5 * elapsedTime
+    // plane.rotation.y = .5 * elapsedTime
 
     // Update Orbital Controls
     // controls.update()
