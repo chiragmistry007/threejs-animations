@@ -8,8 +8,18 @@
     <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
-    <div class="scene"></div>
+    <span class="colorPicker"><input id="body-color" type="color" value="#ff0000"></input><br/>Body</span>
+    <span class="colorPicker"><input id="details-color" type="color" value="#ffffff"></input><br/>Details</span>
+    <span class="colorPicker"><input id="glass-color" type="color" value="#ffffff"></input><br/>Glass</span>
+    <div style="width: 500px; height: 500px">
+        <div class="scene"></div>
+    </div>
     <script src="../gsap/gsap.min.js"></script>
+    <script src="./vendor/three.min.js"></script>
+    <script src="./vendor/GLTFLoader.js"></script>
+    <script src="./vendor/OrbitControl.js"></script>
+    <script src="./vendor/DRACOLoader.js"></script>
+    <script src="./vendor/RoomEnvironment.js"></script>
     <script src="./js/3d-car.js" type="module"></script>
 </body>
 </html>
